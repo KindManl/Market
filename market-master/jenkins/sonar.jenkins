@@ -1,0 +1,118 @@
+#!groovy
+properties([disableConcurrentBuilds()])
+
+pipeline {
+    agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '2', artifactNumToKeepStr: '2'))
+        timestamps()
+    }
+    stages {
+        stage("build SonarQube") {
+            steps {
+                updateGitlabCommitStatus name: 'sonar_build', state: 'pending'
+                echo  " ================= build SonarQube ==================="
+                withSonarQubeEnv('sonar') {
+                    dir ('backend') {
+                        sh "sudo /opt/sonarqube/bin/linux-x86-64/sonar.sh start || true"
+                    }
+                }
+            }
+        }      
+
+        stage("SonarQube analysis backend") {
+            steps {
+                updateGitlabCommitStatus name: 'sonar_back', state: 'pending'                
+                echo  " ================= start SonarQube analysis backend ==================="
+                withSonarQubeEnv('sonar') {
+                    dir ('backend') {
+                        sh "mvn clean test"
+                        sh "mvn sonar:sonar -Dsonar.projectKey=market \
+                                            -Dsonar.host.url=http://51.250.108.33:9000 \
+                                            -Dsonar.login=eaef52b0d33f7b81f58d0aef4086f045baebf403 \
+                                            -Dmaven.test.failure.ignore=true \
+                                            -Dsonar.jacoco.reportPaths=target/jacoco.exec \
+                                            -Dsonar.core.codeCoveragePlugin=jacoco \
+                                            -Dsonar.tests=src/test/java \
+                                            -Djacoco.version=0.8.4 \
+                                            -Dsonar.java.coveragePlugin=jacoco "
+                    }
+                }
+            }
+        }
+        stage("Quality Gate backend") {
+            agent any
+            options {
+                timeout(time: 5, unit: 'MINUTES') 
+            }
+            steps {
+                echo  " ============== Wait for Quality Gate backend ==================="                
+                script {
+                    withSonarQubeEnv('sonar') {
+                        sleep 20
+                        println("QG: start")
+                        def qg = waitForQualityGate()
+                        println("QG: ${qg.status}")
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+            post {
+                success {
+                    updateGitlabCommitStatus name: 'sonar_back', state: 'success'
+                }
+                failure {
+                    updateGitlabCommitStatus name: 'sonar_back', state: 'failed'
+                }
+            }            
+        }
+
+        
+        stage("SonarQube analysis frontend") {
+            steps {
+                updateGitlabCommitStatus name: 'sonar_frontend', state: 'pending'                
+                echo  " ================= start SonarQube analysis frontend ==================="
+                withSonarQubeEnv('sonar') {
+                    dir ('frontend') {
+                        sh "/opt/sonar-scanner/bin/sonar-scanner \
+                                            -Dsonar.projectKey=market-front \
+                                            -Dsonar.sources=. \
+                                            -Dsonar.host.url=http://51.250.108.33:9000 \
+                                            -Dsonar.login=551e7af0a5eb0d2e2692738702d9c78577da4e8f \
+                                            -Dsonar.login=admin -Dsonar.password=admin "
+                    }
+                }
+            }
+        }
+        stage("Quality Gate frontend") {
+            agent any
+            options {
+                timeout(time: 2, unit: 'MINUTES') 
+            }
+            steps {
+                echo  " ============== Wait for Quality Gate frontend ==================="                
+                script {
+                    withSonarQubeEnv('sonar') {
+                        sleep 20
+                        println("QG: start")
+                        def qg = waitForQualityGate()
+                        println("QG: ${qg.status}")
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+            post {
+                success {
+                    updateGitlabCommitStatus name: 'sonar_frontend', state: 'success'
+                }
+                failure {
+                    updateGitlabCommitStatus name: 'sonar_frontend', state: 'failed'
+                }
+            }            
+        }          
+    }
+}

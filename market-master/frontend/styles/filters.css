@@ -1,0 +1,64 @@
+.filters {
+    position: fixed;
+    right: 5%;
+    top: 20%;
+    padding: 10px;
+    width: 17%;
+    height: 50%;
+    font-size: 15px;
+    border-radius: 7px;
+    background-color: #f8f8f8;
+    opacity: 0.8;
+}
+
+.filters_inner ul {
+    padding-left: 0;
+    margin: 0;
+}
+
+.filters_inner .btn {
+    display: inline-block;
+    background-color: #527bcb;
+    background-image: url("../src/Bg.png");
+    padding: 10px 8px;
+    border-radius: 10px;
+    width: 43%;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.filters_inner input {
+    display: inline;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    height: 30px;
+    padding: 0px 10px;
+    border-width: 1px;
+    border-radius: 4px;
+    background-color: rgb(255, 255, 255);
+    text-align: left;
+    font-size: 14px;
+    line-height: 16px;
+    width: 45%;
+    margin-bottom: 30px;
+
+}
+
+.filters_inner .fname {
+    font-weight: bold;
+}
+
+.filters_inner li {
+    margin-left: 20px;
+    padding-left: 1px;
+    margin-bottom: 5px;
+}
+
+.filters_inner li:hover {
+    color: #535353;
+    font-weight: bold;
+}

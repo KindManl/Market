@@ -1,0 +1,23 @@
+.order_inner {
+    justify-content: space-between;
+    padding: 20px;
+    margin-bottom: 10px;
+    z-index: 1000;
+}
+
+.order_inner p{
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+    color: #535353;
+
+}
+
+.order_inner p:hover{
+    color: black;
+}
+
+.order_inner p.active{
+    font-weight: bold;
+    color: black;
+}

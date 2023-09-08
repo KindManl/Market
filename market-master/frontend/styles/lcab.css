@@ -1,0 +1,71 @@
+.LCabWindow input {
+    display: inline;
+    top: 10%;
+    right: 50px;
+    height: 50px;
+    width: 315px;
+    border: none;
+    background: white;
+    border-radius: 50px;
+    padding: 0 60px 0 20px;
+    outline: none;
+    margin-bottom: 30px;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.LCabWindow .AuthInner.active {
+    transform: scale(1);
+    z-index: 100;
+}
+
+.LCabWindow .AuthInner {
+    position: fixed;
+    top: 10%;
+    right: 10px;
+    height: 650px;
+    width: 340px;
+    padding: 30px 20px;
+    background-image: url("../src/Bg.png");
+    border-radius: 30px;
+    transform: scale(0);
+    justify-content: center;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.AuthInner .btn{
+    transform: scale(0);
+    font-size: 0;
+
+}
+
+.AuthInner .btn.active {
+    display: inline;
+    right: 30px;
+    background-image: url("../src/Bg.png");
+    padding: 13px 25px;
+    border-radius: 30px;
+    width: 30%;
+    margin: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    transform: scale(1);
+}
+
+
+.AuthInner .error{
+    transform: scale(0);
+    font-size: 0;
+}
+
+.AuthInner .error.active {
+    position: absolute;
+    right: 30px;
+    background-color: red;
+    padding: 13px 25px;
+    border-radius: 30px;
+    width: 50%;
+    margin: 50px;
+    font-weight: bold;
+    font-size: 14px;
+    transform: scale(1);
+}
